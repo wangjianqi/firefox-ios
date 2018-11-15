@@ -120,7 +120,7 @@ class ToolbarTests: BaseTestCase {
         let hiddenStatusbarElement = app.statusBars.children(matching: .other).element.children(matching: .other).element(boundBy: 0)
         XCTAssertFalse(pageActionMenuButton.exists)
         hiddenStatusbarElement.tap()
-        XCTAssertTrue(hiddenStatusbarElement.isHittable)
+        XCTAssertTrue(pageActionMenuButton.isHittable)
         hiddenStatusbarElement.tap()
         let topElement = app.webViews.otherElements["Internet for people, not profit — Mozilla"].children(matching: .other).matching(identifier: "navigation").element(boundBy: 0).staticTexts["Mozilla"]
         waitForExistence(topElement)
