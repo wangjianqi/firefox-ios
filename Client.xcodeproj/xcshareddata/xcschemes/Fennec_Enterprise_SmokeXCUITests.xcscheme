@@ -302,6 +302,12 @@
                   Identifier = "DataManagementTests/testWebSiteDataOptions()">
                </Test>
                <Test
+                  Identifier = "DataManagementTests/testWebSiteDataEnterFirstTime()">
+               </Test>
+               <Test
+                  Identifier = "DataManagementTests/testWebSiteDataOptions()">
+               </Test>
+               <Test
                   Identifier = "DatabaseFixtureTest">
                </Test>
                <Test
@@ -560,7 +566,10 @@
                   Identifier = "SyncUITests/testUIFromSettings()">
                </Test>
                <Test
-                  Identifier = "TabTraySearchTabsTests">
+                  Identifier = "TabTraySearchTabsTests/testSearchFieldClearedAfterVisingWebsite()">
+               </Test>
+               <Test
+                  Identifier = "TabTraySearchTabsTests/testSearchTabsPrivateMode()">
                </Test>
                <Test
                   Identifier = "ThirdPartySearchTest">
