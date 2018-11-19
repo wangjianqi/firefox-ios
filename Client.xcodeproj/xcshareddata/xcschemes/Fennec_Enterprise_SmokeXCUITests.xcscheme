@@ -302,12 +302,6 @@
                   Identifier = "DataManagementTests/testWebSiteDataOptions()">
                </Test>
                <Test
-                  Identifier = "DataManagementTests/testWebSiteDataEnterFirstTime()">
-               </Test>
-               <Test
-                  Identifier = "DataManagementTests/testWebSiteDataOptions()">
-               </Test>
-               <Test
                   Identifier = "DatabaseFixtureTest">
                </Test>
                <Test
