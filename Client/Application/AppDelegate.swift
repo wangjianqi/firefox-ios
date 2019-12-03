@@ -15,6 +15,12 @@ import Sync
 import CoreSpotlight
 import UserNotifications
 //日志
+
+#if canImport(BackgroundTasks)
+ import BackgroundTasks
+#endif
+
+
 private let log = Logger.browserLogger
 
 let LatestAppVersionProfileKey = "latestAppVersion"
@@ -226,6 +232,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             LeanPlumClient.shared.set(enabled: true)
         }
 
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part1", using: DispatchQueue.global()) { task in
+                guard self.profile?.hasSyncableAccount() ?? false else {
+                    self.shutdownProfileWhenNotActive(application)
+                    return
+                }
+
+                NSLog("background sync part 1") // NSLog to see in device console
+                let collection = ["bookmarks", "history"]
+                self.profile?.syncManager.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
+                    task.setTaskCompleted(success: true)
+                    let request = BGProcessingTaskRequest(identifier: "org.mozilla.ios.sync.part2")
+                    request.earliestBeginDate = Date(timeIntervalSinceNow: 1)
+                    request.requiresNetworkConnectivity = true
+                    do {
+                        try BGTaskScheduler.shared.submit(request)
+                    } catch {
+                        NSLog(error.localizedDescription)
+                    }
+                }
+            }
+
+            // Split up the sync tasks so each can get maximal time for a bg task.
+            // This task runs after the bookmarks+history sync.
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: "org.mozilla.ios.sync.part2", using: DispatchQueue.global()) { task in
+                NSLog("background sync part 2") // NSLog to see in device console
+                let collection = ["tabs", "logins", "clients"]
+                self.profile?.syncManager.syncNamedCollections(why: .backgrounded, names: collection).uponQueue(.main) { _ in
+                    self.shutdownProfileWhenNotActive(application)
+                    task.setTaskCompleted(success: true)
+                }
+            }
+        }
+
         return shouldPerformAdditionalDelegateHandling
     }
 
@@ -322,8 +362,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         // TODO: iOS 13 needs to iterate all the BVCs.
         BrowserViewController.foregroundBVC().downloadQueue.pauseAll()
 
-        syncOnDidEnterBackground(application: application)
-
         UnifiedTelemetry.recordEvent(category: .action, method: .background, object: .app)
 
         let singleShotTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
@@ -335,6 +373,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         }
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
+
+        if #available(iOS 13.0, *) {
+            scheduleBGSync(application: application)
+        } else {
+            syncOnDidEnterBackground(application: application)
+        }
     }
 
     fileprivate func syncOnDidEnterBackground(application: UIApplication) {
@@ -503,6 +547,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         let handledShortCutItem = QuickActions.sharedInstance.handleShortCutItem(shortcutItem, withBrowserViewController: BrowserViewController.foregroundBVC())
 
         completionHandler(handledShortCutItem)
+    }
+
+    @available(iOS 13.0, *)
+    private func scheduleBGSync(application: UIApplication) {
+        if profile?.syncManager.isSyncing ?? false {
+            // If syncing, create a bg task because _shutdown() is blocking and might take a few seconds to complete
+            var taskId = UIBackgroundTaskIdentifier(rawValue: 0)
+            taskId = application.beginBackgroundTask(expirationHandler: {
+                application.endBackgroundTask(taskId)
+            })
+
+            DispatchQueue.main.async {
+                self.profile?._shutdown()
+                application.endBackgroundTask(taskId)
+            }
+        } else {
+            // Blocking call, however without sync running it should be instantaneous
+            profile?._shutdown()
+
+            let request = BGProcessingTaskRequest(identifier: "org.mozilla.ios.sync.part1")
+            request.earliestBeginDate = Date(timeIntervalSinceNow: 1)
+            request.requiresNetworkConnectivity = true
+            do {
+                try BGTaskScheduler.shared.submit(request)
+            } catch {
+                NSLog(error.localizedDescription)
+            }
+        }
     }
 }
 
