@@ -4,7 +4,7 @@
 
 import UIKit
 import SDWebImage
-
+//线程锁
 private let imageLock = NSLock()
 
 extension CGRect {
@@ -27,6 +27,7 @@ extension UIImage {
     /// Despite docs that say otherwise, UIImage(data: NSData) isn't thread-safe (see bug 1223132).
     /// As a workaround, synchronize access to this initializer.
     /// This fix requires that you *always* use this over UIImage(data: NSData)!
+    //线程安全
     public static func imageFromDataThreadSafe(_ data: Data) -> UIImage? {
         imageLock.lock()
         let image = UIImage(data: data)

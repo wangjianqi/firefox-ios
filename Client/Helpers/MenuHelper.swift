@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
-
+//使用objc修饰，关键字optional
 @objc public protocol MenuHelperInterface {
     @objc optional func menuHelperCopy()
     @objc optional func menuHelperOpenAndFill()

@@ -49,7 +49,7 @@ open class DeviceInfo {
     open class func deviceModel() -> String {
         return UIDevice.current.model
     }
-
+    //模拟器
     open class func isSimulator() -> Bool {
         return ProcessInfo.processInfo.environment["SIMULATOR_ROOT"] != nil
     }
@@ -62,7 +62,7 @@ open class DeviceInfo {
         // Thus, testing has to take place on actual devices.
         return !lowGraphicsQualityModels.contains(specificModelName)
     }
-
+    //是否有网络
     open class func hasConnectivity() -> Bool {
         let status = Reach().connectionStatus()
         switch status {
@@ -74,6 +74,7 @@ open class DeviceInfo {
     }
 
     // Reports portrait screen size regardless of the current orientation.
+    //返回CGSize
     open class func screenSizeOrientationIndependent() -> CGSize {
         let screenSize = UIScreen.main.bounds.size
         return CGSize(width: min(screenSize.width, screenSize.height), height: max(screenSize.width, screenSize.height))

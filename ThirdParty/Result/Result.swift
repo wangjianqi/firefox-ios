@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+//枚举
 public enum Maybe<T> {
     case failure(MaybeErrorType)
     case success(T)
@@ -22,6 +22,7 @@ public enum Maybe<T> {
 
     public var successValue: T? {
         switch self {
+            //let
         case let .success(success): return success
         case .failure: return nil
         }
@@ -47,17 +48,18 @@ public enum Maybe<T> {
         case .failure: return true
         }
     }
-
+    //f:返回的是U
     public func map<U>(_ f: (T) -> U) -> Maybe<U> {
         switch self {
         case let .failure(error): return .failure(error)
         case let .success(value): return .success(f(value))
         }
     }
-
+    //f:返回的Maybe
     public func bind<U>(_ f: (T) -> Maybe<U>) -> Maybe<U> {
         switch self {
         case let .failure(error): return .failure(error)
+            //对应返回value
         case let .success(value): return f(value)
         }
     }

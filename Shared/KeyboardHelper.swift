@@ -20,6 +20,7 @@ public struct KeyboardState {
         // reference to an EaseIn curve, then change the underlying pointer data with that ref.
         var curve = UIView.AnimationCurve.easeIn
         if let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? Int {
+            //getValue:复制到缓冲区
             NSNumber(value: curveValue as Int).getValue(&curve)
         }
         self.animationCurve = curve
@@ -39,7 +40,7 @@ public struct KeyboardState {
         return 0
     }
 }
-
+//AnyObject
 public protocol KeyboardHelperDelegate: AnyObject {
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardWillShowWithState state: KeyboardState)
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidShowWithState state: KeyboardState)
@@ -54,7 +55,7 @@ open class KeyboardHelper: NSObject {
     open var currentState: KeyboardState?
 
     fileprivate var delegates = [WeakKeyboardDelegate]()
-
+    //单例
     open class var defaultHelper: KeyboardHelper {
         struct Singleton {
             static let instance = KeyboardHelper()
@@ -65,6 +66,7 @@ open class KeyboardHelper: NSObject {
     /**
      * Starts monitoring the keyboard state.
      */
+    //开始监听
     open func startObserving() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
@@ -81,6 +83,7 @@ open class KeyboardHelper: NSObject {
      */
     open func addDelegate(_ delegate: KeyboardHelperDelegate) {
         // Reuse any existing slots that have been deallocated.
+        //where：条件
         for weakDelegate in delegates where weakDelegate.delegate == nil {
             weakDelegate.delegate = delegate
             return
@@ -116,7 +119,7 @@ open class KeyboardHelper: NSObject {
         }
     }
 }
-
+//weak
 private class WeakKeyboardDelegate {
     weak var delegate: KeyboardHelperDelegate?
 

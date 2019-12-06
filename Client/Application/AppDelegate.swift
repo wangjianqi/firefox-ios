@@ -94,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
 
         // Start the keyboard helper to monitor and cache keyboard state.
         KeyboardHelper.defaultHelper.startObserving()
-
+        //字体变化
         DynamicFontHelper.defaultHelper.startObserving()
 
         MenuHelper.defaultHelper.setItems()
@@ -195,7 +195,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         self.profile = p
         return p
     }
-
+    //程序加载
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         var shouldPerformAdditionalDelegateHandling = true
@@ -209,6 +209,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
         window!.makeKeyAndVisible()
 
         // Now roll logs.
+        //日志
         DispatchQueue.global(qos: DispatchQoS.background.qosClass).async {
             Logger.syncLogger.deleteOldLogsDownToSizeLimit()
             Logger.browserLogger.deleteOldLogsDownToSizeLimit()
@@ -462,7 +463,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIViewControllerRestorati
             print("Error: Unable to start WebServer \(err)")
         }
     }
-
+    //代理
     fileprivate func setUserAgent() {
         let firefoxUA = UserAgent.defaultUserAgent()
 

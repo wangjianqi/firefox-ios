@@ -65,6 +65,7 @@ class IntroViewController: UIViewController {
         view.addSubview(main2panel)
         main2panel.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
+            //安全区域
             make.top.equalTo(view.safeArea.top)
             make.bottom.equalTo(view.safeArea.bottom)
         }
@@ -102,6 +103,7 @@ class IntroViewController: UIViewController {
         heading.adjustsFontSizeToFitWidth = true
         heading.textAlignment = .center
         heading.snp.makeConstraints { make in
+            //inset:边距等于10
             make.left.right.equalToSuperview().inset(10)
             make.top.equalToSuperview()
         }
@@ -185,6 +187,7 @@ class IntroViewController: UIViewController {
             make.right.equalToSuperview().inset(buttonEdgeInset)
         }
         if #available(iOS 13, *) {
+            //适配iOS13
             closeButton.tintColor = .secondaryLabel
         } else {
             closeButton.tintColor = .black

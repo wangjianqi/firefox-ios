@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+//锁
 public final class LockProtected<T> {
     private var lock: ReadWriteLock
     private var item: T
@@ -20,13 +20,13 @@ public final class LockProtected<T> {
         self.item = item
         self.lock = lock
     }
-
+    //读取
     public func withReadLock<U>(block: (T) -> U) -> U {
         return lock.withReadLock { [unowned self] in
             return block(self.item)
         }
     }
-
+    //写
     public func withWriteLock<U>(block: (inout T) -> U) -> U {
         return lock.withWriteLock { [unowned self] in
             return block(&self.item)

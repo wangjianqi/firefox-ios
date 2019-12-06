@@ -7,5 +7,5 @@
 //
 
 import Foundation
-
+//&
 public typealias MaybeErrorType = Error & CustomStringConvertible

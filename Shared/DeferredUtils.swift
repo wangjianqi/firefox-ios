@@ -59,13 +59,13 @@ public func always<T>(_ t: T) -> () -> Deferred<Maybe<T>> {
 public func deferMaybe<T>(_ s: T) -> Deferred<Maybe<T>> {
     return Deferred(value: Maybe(success: s))
 }
-
+//
 public func deferMaybe<T>(_ e: MaybeErrorType) -> Deferred<Maybe<T>> {
     return Deferred(value: Maybe(failure: e))
 }
 
 public typealias Success = Deferred<Maybe<Void>>
-
+//成功
 @discardableResult public func succeed() -> Success {
     return deferMaybe(())
 }
@@ -196,6 +196,7 @@ public func chain<T, U>(_ a: Deferred<Maybe<T>>, f: @escaping (T) -> U) -> Defer
 public func deferDispatchAsync<T>(_ queue: DispatchQueue, f: @escaping () -> Deferred<Maybe<T>>) -> Deferred<Maybe<T>> {
     let deferred = Deferred<Maybe<T>>()
     queue.async(execute: {
+        //f:无参,返回Deferred
         f().upon { result in
             deferred.fill(result)
         }

@@ -23,7 +23,7 @@
 
 import Foundation
 import SystemConfiguration
-
+//
 enum ReachabilityType: CustomStringConvertible {
     case wwan
     case wiFi
@@ -37,7 +37,9 @@ enum ReachabilityType: CustomStringConvertible {
 }
 
 enum ReachabilityStatus: CustomStringConvertible  {
+    //离线
     case offline
+    //枚举类型
     case online(ReachabilityType)
     case unknown
 
@@ -73,7 +75,7 @@ open class Reach {
         return ReachabilityStatus(reachabilityFlags: flags)
     }
 
-
+    //监听变化
     func monitorReachabilityChanges() {
         let host = "google.com"
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
@@ -94,6 +96,7 @@ open class Reach {
 }
 
 extension ReachabilityStatus {
+    //枚举的构造方法
     fileprivate init(reachabilityFlags flags: SCNetworkReachabilityFlags) {
         let connectionRequired = flags.contains(.connectionRequired)
         let isReachable = flags.contains(.reachable)

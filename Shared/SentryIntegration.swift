@@ -76,7 +76,7 @@ public class Sentry {
                 attributes.merge(with: self.attributes)
                 event.extra = attributes
             }
-        } catch let error {
+        } catch let error {//解包error
             Logger.browserLogger.error("Failed to initialize Sentry: \(error)")
         }
 

@@ -12,7 +12,9 @@ import Foundation
 public var DeferredDefaultQueue = DispatchQueue.global(qos: .default)
 
 open class Deferred<T> {
+    //类型
     typealias UponBlock = (DispatchQueue, (T) -> ())
+    //类型
     private typealias Protected = (protectedValue: T?, uponBlocks: [UponBlock])
 
     private var protected: LockProtected<Protected>
@@ -25,12 +27,14 @@ open class Deferred<T> {
 
     // Check whether or not the receiver is filled
     public var isFilled: Bool {
+        //返回一个bool值
         return protected.withReadLock { $0.protectedValue != nil }
     }
 
     private func _fill(value: T, assertIfFilled: Bool) {
         let (filledValue, blocks) = protected.withWriteLock { data -> (T, [UponBlock]) in
             if assertIfFilled {
+                //前提条件
                 precondition(data.protectedValue == nil, "Cannot fill an already-filled Deferred")
                 data.protectedValue = value
             } else if data.protectedValue == nil {
@@ -71,6 +75,7 @@ open class Deferred<T> {
 }
 
 extension Deferred {
+    //值
     public var value: T {
         // fast path - return if already filled
         if let v = peek() {
@@ -81,7 +86,9 @@ extension Deferred {
         let group = DispatchGroup()
         var result: T!
         group.enter()
+        //写在一行
         self.upon { result = $0; group.leave() }
+        //等待
         _ = group.wait(timeout: .distantFuture)
         return result
     }
@@ -104,6 +111,7 @@ extension Deferred {
 }
 
 extension Deferred {
+    //在...之上
     public func upon(_ block: @escaping (T) ->()) {
         uponQueue(defaultQueue, block: block)
     }

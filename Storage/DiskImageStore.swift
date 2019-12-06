@@ -22,6 +22,7 @@ open class DiskImageStore {
     fileprivate let files: FileAccessor
     fileprivate let filesDir: String
     fileprivate let queue = DispatchQueue(label: "DiskImageStore")
+    //压缩比例
     fileprivate let quality: CGFloat
     fileprivate var keys: Set<String>
 
@@ -32,6 +33,7 @@ open class DiskImageStore {
 
         // Build an in-memory set of keys from the existing images on disk.
         var keys = [String]()
+        //文件夹名称
         if let fileEnumerator = FileManager.default.enumerator(atPath: filesDir) {
             for file in fileEnumerator {
                 keys.append(file as! String)
@@ -84,6 +86,7 @@ open class DiskImageStore {
     /// Clears all images from the cache, excluding the given set of keys.
     open func clearExcluding(_ keys: Set<String>) -> Success {
         return deferDispatchAsync(queue) { () -> Success in
+            //减法
             let keysToDelete = self.keys.subtracting(keys)
 
             for key in keysToDelete {
@@ -94,7 +97,7 @@ open class DiskImageStore {
                     log.warning("Failed to remove DiskImageStore item at \(url.absoluteString): \(error)")
                 }
             }
-
+            //交集
             self.keys = self.keys.intersection(keys)
 
             return succeed()

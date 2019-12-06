@@ -558,7 +558,7 @@ class BrowserViewController: UIViewController {
     fileprivate func crashedLastLaunch() -> Bool {
         return Sentry.crashedLastLaunch
     }
-
+    //
     fileprivate func cleanlyBackgrounded() -> Bool {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return false
@@ -1912,6 +1912,7 @@ extension BrowserViewController: IntroViewControllerDelegate {
         }
 
         if force || profile.prefs.intForKey(PrefsKeys.IntroSeen) == nil {
+            //弹出介绍页
             let introViewController = IntroViewController()
             introViewController.delegate = self
             // On iPad we present it modally in a controller
